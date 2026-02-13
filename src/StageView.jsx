@@ -313,7 +313,7 @@ export default function StageView() {
       <style>{GLOBAL_STYLES}</style>
 
       {/* --- 顶部悬浮导航 --- */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.05)] z-[9999] flex items-center justify-between px-8 border-b border-gray-100">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.05)] z-[9999] flex items-center justify-between px-8 border-b border-gray-100 min-w-[1440px]">
         <div className="flex items-center gap-4">
            {/* Logo / 图标 */}
            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold shadow-sm">
@@ -344,7 +344,7 @@ export default function StageView() {
       </header>
 
       {/* --- 主体布局 --- */}
-      <div className="pt-20 max-w-[1600px] mx-auto block xl:flex items-start gap-6 px-4 md:px-6 pb-20">
+      <div className="pt-20 max-w-[1600px] mx-auto flex items-start gap-6 px-6 pb-20 min-w-[1440px]">
 
         {/* 左侧：文档内容流 (无缝拼接) */}
         <main ref={contentRef} className="flex-1 min-w-0 bg-white stage-blackbox-content">
@@ -393,7 +393,7 @@ export default function StageView() {
         </main>
 
         {/* 右侧：智能目录 (Sticky) */}
-        <aside className="w-full xl:w-72 flex-shrink-0 block static xl:sticky xl:top-24 h-auto xl:h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar mt-8 xl:mt-0">
+        <aside className="w-72 flex-shrink-0 block sticky top-24 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
             <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
                 <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-50">
                     <h3 className="font-bold text-gray-800 text-sm">目录</h3>
