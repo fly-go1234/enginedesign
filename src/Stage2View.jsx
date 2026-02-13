@@ -497,10 +497,47 @@ const AccPolygonCard = ({ data, name }) => {
     );
 };
 
-const Stage2View = () => {
-  const [scheme, setScheme] = useState('VII');
+// 修改：接收 props
+const Stage2View = ({ schemeProp, customParams }) => {
+  const [localScheme, setLocalScheme] = useState('VII');
+  const effectiveScheme = schemeProp || localScheme;
 
-  const p = ADAPTED_SCHEMES[scheme];
+  // 1. 构造统一的原始数据源 (Raw Params)
+  const rawParams = useMemo(() => {
+    // 如果是自定义模式，且有自定义参数，则进行字段映射
+    if (effectiveScheme === 'Custom' && customParams) {
+      return {
+        h: customParams.h,
+        d: customParams.d,
+        e: customParams.e,
+        k: customParams.k,
+        lac: customParams.lAC_ratio, // 注意这里字段名的对应
+        n1: customParams.n1,
+        cam1: { e: customParams.cam1_e },
+        cam2: { e: customParams.cam2_e },
+        // Stage2 只需要用到这些
+      };
+    }
+    // 否则读取静态表
+    return RAW_SCHEMES[effectiveScheme] || RAW_SCHEMES['VII'];
+  }, [effectiveScheme, customParams]);
+
+  // 2. 构造适配后的几何数据 p (用于绘图)
+  const p = useMemo(() => ({
+    name: effectiveScheme === 'Custom' ? '自定义方案' : `方案 ${effectiveScheme}`,
+    H: rawParams.h,
+    D: rawParams.d,
+    e: rawParams.e,
+    K: rawParams.k,
+    e1: rawParams.cam1.e,
+    e2: rawParams.cam2.e,
+    ...LOCKED_GEO
+  }), [rawParams, effectiveScheme]);
+
+  // 兼容旧代码的 setScheme 接口
+  const setScheme = setLocalScheme;
+  // 兼容旧代码的 scheme 变量 (用于 UI 显示选中状态)
+  const scheme = effectiveScheme;
 
   // 1. 解算逻辑 (共用: 基础运动学)
   const mech = useMemo(() => {
@@ -570,7 +607,7 @@ const Stage2View = () => {
 
   // ================= 2.3 - 2.5 核心计算 =================
   const calculationData = useMemo(() => {
-      const p_raw = RAW_SCHEMES[scheme];
+      const p_raw = rawParams;
       const { l, r } = calculateKinematics({ h: p_raw.h, k: p_raw.k, e: p_raw.e });
       const geo_mm = { l, r, e: p_raw.e, lac_ratio: p_raw.lac };
 
@@ -608,7 +645,7 @@ const Stage2View = () => {
   }, [scheme]);
 
   const curveData = useMemo(() => {
-      const p_raw = RAW_SCHEMES[scheme];
+      const p_raw = rawParams;
       const { l, r } = calculateKinematics({ h: p_raw.h, k: p_raw.k, e: p_raw.e });
       const geo_mm = { l, r, e: p_raw.e, lac_ratio: p_raw.lac };
       const tdcState = solvePoint(geo_mm, p_raw.n1, 0);
@@ -628,7 +665,7 @@ const Stage2View = () => {
   }, [scheme]);
 
   const markerData = useMemo(() => {
-      const p_raw = RAW_SCHEMES[scheme];
+      const p_raw = rawParams;
       const { l, r } = calculateKinematics({ h: p_raw.h, k: p_raw.k, e: p_raw.e });
       const geo_mm = { l, r, e: p_raw.e, lac_ratio: p_raw.lac };
       const tdcState = solvePoint(geo_mm, p_raw.n1, 0);
