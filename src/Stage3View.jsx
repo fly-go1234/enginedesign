@@ -848,7 +848,8 @@ const Stage3View = ({ schemeProp, customParams }) => {
                 <div className="break-before-page">
                     <h3 className="text-lg font-bold mb-4 border-b-2 border-black">附：动态静力分析矢量图 (全30位置)</h3>
                     {/* 使用响应式网格展示所有图 */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/*<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">*/}
+                    <div className="grid grid-cols-3 gap-8">
                         {analysisData.map((d, i) => (
                             <PositionCard key={i} data={d} />
                         ))}
