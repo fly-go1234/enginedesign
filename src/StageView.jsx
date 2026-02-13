@@ -481,13 +481,6 @@ export default function StageView() {
                     />
                 </div>
 
-                <div id="section-1" className="stage-section-wrapper mb-8">
-                    <Stage1View
-                        onDataChange={setCustomParams}
-                        onSchemeChange={setCurrentScheme}
-                    />
-                </div>
-
                 {/* Stage 2 */}
                 <div id="section-2" className="stage-section-wrapper mb-8">
                     <Stage2View
