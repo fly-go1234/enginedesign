@@ -180,26 +180,37 @@ export default function StageView() {
         const candidates = contentRef.current.querySelectorAll('h1, h2, h3, h4, h5, div, p, span, b, strong');
 
         candidates.forEach((el, index) => {
-            // 跳过隐藏元素
+            // 1. 跳过隐藏元素
             if (el.style.display === 'none') return;
 
             const text = el.innerText ? el.innerText.trim() : "";
             if (text.length < 2 || text.length > 50) return;
 
+            // =========================================================
+            // 【核心修复】: 仅过滤三级格式 (X.X.X)，绝不通过标签名过滤
+            // =========================================================
+            if (text.match(/^\d+\.\d+\.\d+/)) {
+                return; // 遇到 1.1.1 这种格式直接跳过，不录入目录
+            }
+
+            // 2. 匹配逻辑
             const isKeywordMatch = TOC_KEYWORDS.some(kw => text.startsWith(kw));
+            // 保留 H3，防止误删二级标题
             const isTagMatch = ['H1','H2','H3'].includes(el.tagName);
 
             if (isKeywordMatch || isTagMatch) {
                 if (!el.id) el.id = `toc-node-${index}`;
 
-                let level = 2; // 默认二级
-                // 一级目录判定
+                let level = 2; // 默认为二级
+
+                // --- 一级目录判定 ---
                 if (el.tagName === 'H1' ||
                     text.match(/^[一二三四五六七八九]、/) ||
                     ['摘要', '参考文献', '附录'].includes(text)) {
                     level = 1;
                 }
-                // 二级目录判定
+                // --- 二级目录判定 ---
+                // 只要是 X.X 开头 (例如 1.1)，且上面已经排除了 X.X.X，这里就是安全的二级
                 else if (text.match(/^\d+\.\d+/)) {
                     level = 2;
                 }
@@ -339,10 +350,6 @@ export default function StageView() {
         <main ref={contentRef} className="flex-1 min-w-0 bg-white stage-blackbox-content">
             <div className="px-10 py-8 bg-white shadow-[0_0_20px_rgba(0,0,0,0.02)] rounded-xl border border-gray-50">
 
-                {/* 使用 key={currentScheme} 确保子组件完全重置。
-                   配合 useEffect 中的事件模拟，实现数据同步。
-                */}
-
                 <div id="section-1" className="stage-section-wrapper mb-8">
                     <Stage1View
                         onDataChange={setCustomParams}
@@ -350,7 +357,6 @@ export default function StageView() {
                     />
                 </div>
 
-                {/* Stage 2 */}
                 {/* Stage 2 */}
                 <div id="section-2" className="stage-section-wrapper mb-8">
                     <Stage2View
