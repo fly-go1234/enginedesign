@@ -76,6 +76,97 @@ const GLOBAL_STYLES = `
   }
 `;
 
+// 新增组件 A：版本更新日志 (Update Log)
+// =========================================================
+const UPDATE_HISTORY = [
+  { version: "v1.0", date: "2026-02-13", content: "上线" }
+];
+
+const UpdateLog = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  if (!isOpen) return (
+     <div className="mb-6 text-xs text-center text-blue-400 cursor-pointer hover:text-blue-600 transition-colors bg-blue-50/50 py-1 rounded" onClick={()=>setIsOpen(true)}>
+       ✨ 显示更新日志 (v1.2)
+     </div>
+  );
+
+  return (
+    <div className="mb-8 bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg p-4 text-sm shadow-sm relative group">
+      <div className="flex justify-between items-center mb-3 border-b border-blue-100 pb-2">
+         <span className="font-bold text-blue-800 flex items-center gap-2">
+            📢 版本更新记录 (Changelog)
+         </span>
+         <button onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} className="text-blue-300 hover:text-blue-600 px-2">×</button>
+      </div>
+      <div className="space-y-3 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+        {UPDATE_HISTORY.map((item, i) => (
+           <div key={i} className="flex gap-3 items-start">
+              <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded h-fit whitespace-nowrap ${i===0 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                {item.version}
+              </span>
+              <div>
+                 <div className="text-gray-400 text-[10px] mb-0.5 leading-none">{item.date}</div>
+                 <div className="text-gray-700 leading-relaxed">{item.content}</div>
+              </div>
+           </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// =========================================================
+// 新增组件 B：留言讨论区 (Comment Section - Giscus)
+const CommentSection = () => {
+    // ⚠️ 注意：要让评论区真正工作，你需要去 giscus.app 配置你自己的 GitHub 仓库
+    // 获取到 data-repo, data-repo-id 等信息后，替换下方的字符串
+    const commentBox = useRef(null);
+
+    useEffect(() => {
+        if (!commentBox.current) return;
+        // 清除旧的 (防止 React 严格模式下重复加载)
+        commentBox.current.innerHTML = '';
+
+        const script = document.createElement('script');
+        script.src = "https://giscus.app/client.js";
+        // --- 请替换以下配置为你自己的 ---
+        script.setAttribute("data-repo", "fly-go1234/enginedesign"); // 示例：用户名/仓库名
+        script.setAttribute("data-repo-id", "R_kgDORPWYWQ"); // 示例：Repo ID
+        script.setAttribute("data-category", "General");
+        script.setAttribute("data-category-id", "DIC_kwDORPWYWc4C2W46"); // 示例：Category ID
+        // -----------------------------
+        script.setAttribute("data-mapping", "pathname");
+        script.setAttribute("data-strict", "0");
+        script.setAttribute("data-reactions-enabled", "1");
+        script.setAttribute("data-emit-metadata", "0");
+        script.setAttribute("data-input-position", "top");
+        script.setAttribute("data-theme", "light");
+        script.setAttribute("data-lang", "zh-CN");
+        script.setAttribute("crossorigin", "anonymous");
+        script.async = true;
+
+        commentBox.current.appendChild(script);
+    }, []);
+
+    return (
+        <div className="mt-16 pt-10 border-t border-gray-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                💬 讨论区 / 留言板
+            </h3>
+            <div className="bg-gray-50 rounded-xl p-4 min-h-[200px]">
+                <div ref={commentBox}>
+                    {/* Giscus 脚本将在这里加载 */}
+                    <div className="text-center text-gray-400 py-8 text-sm">
+                        正在连接评论服务器... <br/>
+                        (如果长时间未显示，请检查代码中的 data-repo 配置)
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 // 目录关键字配置
 const TOC_KEYWORDS = [
   "摘要", "目录",
@@ -350,6 +441,16 @@ export default function StageView() {
         <main ref={contentRef} className="flex-1 min-w-0 bg-white stage-blackbox-content">
             <div className="px-4 md:px-10 py-8 bg-white shadow-[0_0_20px_rgba(0,0,0,0.02)] rounded-xl border border-gray-50">
 
+                {/* 【修改 1：在此处插入更新日志】 */}
+                <UpdateLog />
+
+                <div id="section-1" className="stage-section-wrapper mb-8">
+                    <Stage1View
+                        onDataChange={setCustomParams}
+                        onSchemeChange={setCurrentScheme}
+                    />
+                </div>
+
                 <div id="section-1" className="stage-section-wrapper mb-8">
                     <Stage1View
                         onDataChange={setCustomParams}
@@ -386,7 +487,7 @@ export default function StageView() {
                         customParams={customParams}
                     />
                 </div>
-
+                <CommentSection />
                 <div className="mt-16 pt-8 border-t border-gray-100 text-center">
                 </div>
             </div>
