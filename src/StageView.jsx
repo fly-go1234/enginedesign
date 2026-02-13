@@ -83,7 +83,7 @@ const UPDATE_HISTORY = [
 ];
 
 const UpdateLog = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   if (!isOpen) return (
      <div className="mb-6 text-xs text-center text-blue-400 cursor-pointer hover:text-blue-600 transition-colors bg-blue-50/50 py-1 rounded" onClick={()=>setIsOpen(true)}>
@@ -533,3 +533,4 @@ export default function StageView() {
     </div>
   );
 }
+
