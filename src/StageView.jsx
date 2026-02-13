@@ -344,11 +344,11 @@ export default function StageView() {
       </header>
 
       {/* --- 主体布局 --- */}
-      <div className="pt-20 max-w-[1600px] mx-auto flex items-start gap-6 px-6 pb-20">
+      <div className="pt-20 max-w-[1600px] mx-auto block xl:flex items-start gap-6 px-4 md:px-6 pb-20">
 
         {/* 左侧：文档内容流 (无缝拼接) */}
         <main ref={contentRef} className="flex-1 min-w-0 bg-white stage-blackbox-content">
-            <div className="px-10 py-8 bg-white shadow-[0_0_20px_rgba(0,0,0,0.02)] rounded-xl border border-gray-50">
+            <div className="px-4 md:px-10 py-8 bg-white shadow-[0_0_20px_rgba(0,0,0,0.02)] rounded-xl border border-gray-50">
 
                 <div id="section-1" className="stage-section-wrapper mb-8">
                     <Stage1View
@@ -393,7 +393,7 @@ export default function StageView() {
         </main>
 
         {/* 右侧：智能目录 (Sticky) */}
-        <aside className="w-72 flex-shrink-0 hidden xl:block sticky top-24 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+        <aside className="w-full xl:w-72 flex-shrink-0 block static xl:sticky xl:top-24 h-auto xl:h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar mt-8 xl:mt-0">
             <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
                 <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-50">
                     <h3 className="font-bold text-gray-800 text-sm">目录</h3>
