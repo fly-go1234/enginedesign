@@ -87,7 +87,7 @@ const UpdateLog = () => {
 
   if (!isOpen) return (
      <div className="mb-6 text-xs text-center text-blue-400 cursor-pointer hover:text-blue-600 transition-colors bg-blue-50/50 py-1 rounded" onClick={()=>setIsOpen(true)}>
-       ✨ 显示更新日志 (v1.2)
+       ✨ 显示更新日志 (v1.0)
      </div>
   );
 
@@ -97,7 +97,7 @@ const UpdateLog = () => {
          <span className="font-bold text-blue-800 flex items-center gap-2">
             📢 版本更新记录 (Changelog)
          </span>
-         <button onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} className="text-blue-300 hover:text-blue-600 px-2">×</button>
+         <div onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} className="text-blue-300 hover:text-blue-600 px-2 cursor-pointer">×</div>
       </div>
       <div className="space-y-3 max-h-40 overflow-y-auto custom-scrollbar pr-2">
         {UPDATE_HISTORY.map((item, i) => (
@@ -112,6 +112,39 @@ const UpdateLog = () => {
            </div>
         ))}
       </div>
+    </div>
+  );
+};
+
+const DonateSection = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="mt-10 mb-12 text-center">
+      {/* 修改：圆形“赏”字图标 */}
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-12 h-12 mx-auto bg-[#E24E4E] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 hover:scale-110 transition-all cursor-pointer select-none border-2 border-white ring-2 ring-red-100"
+        title="点击打赏作者"
+      >
+        <span className="text-xl font-bold font-serif">赏</span>
+      </div>
+
+      {isOpen && (
+        <div className="mt-6 p-3 bg-white border border-gray-100 rounded-xl shadow-lg inline-block animate-fadeIn">
+          {/* 确保 m.jpg 在 public 文件夹 */}
+          <img
+            src="/m.jpg"
+            alt="打赏"
+            className="w-48 h-auto block rounded-lg"
+            onError={(e) => {
+                e.target.style.display='none';
+                e.target.parentNode.innerHTML = '<div class="text-xs text-gray-400 p-4">图片加载失败<br/>请检查 public/m.jpg</div>';
+            }}
+          />
+          <div className="mt-2 text-[10px] text-gray-400">感谢您的支持</div>
+        </div>
+      )}
     </div>
   );
 };
@@ -277,9 +310,6 @@ export default function StageView() {
             const text = el.innerText ? el.innerText.trim() : "";
             if (text.length < 2 || text.length > 50) return;
 
-            // =========================================================
-            // 【核心修复】: 仅过滤三级格式 (X.X.X)，绝不通过标签名过滤
-            // =========================================================
             if (text.match(/^\d+\.\d+\.\d+/)) {
                 return; // 遇到 1.1.1 这种格式直接跳过，不录入目录
             }
@@ -487,6 +517,9 @@ export default function StageView() {
                         customParams={customParams}
                     />
                 </div>
+
+                <DonateSection />
+
                 <CommentSection />
                 <div className="mt-16 pt-8 border-t border-gray-100 text-center">
                 </div>
